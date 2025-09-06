@@ -9,6 +9,11 @@
 #pragma pack(push, 1)
 #endif // defined(_WIN32)
 
+#if defined(__unix__) || defined(__APPLE__)
+    #include <arpa/inet.h>
+    #include <cstdint>
+#endif
+
 class RtpHeader {
 public:
 #if defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || defined(_WIN32) && REG_DWORD == REG_DWORD_BIG_ENDIAN

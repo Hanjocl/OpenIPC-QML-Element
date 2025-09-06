@@ -4,9 +4,13 @@
 #include <iostream>
 #include <vector>
 
+#if defined(__WIN32)
 extern "C" {
 #include <libavutil/fifo.h> // Ensures full AVFifo definition
 }
+#endif
+
+
 
 #define MAX_AUDIO_PACKET (2 * 1024 * 1024)
 
@@ -72,9 +76,16 @@ bool FFmpegDecoder::OpenInput(string &inputFile) {
     }
 
     // 创建音频解码缓存
+    
     if (hasAudioStream) {
-        audioFifoBuffer = shared_ptr<AVFifo>(
-            av_fifo_alloc2(0, GetAudioFrameSamples() * GetAudioChannelCount() * 10, AV_FIFO_FLAG_AUTO_GROW));
+        size_t bufferSize = GetAudioFrameSamples() * GetAudioChannelCount() * 10;
+        audioFifoBuffer = std::shared_ptr<AVFifo>(
+            av_fifo_alloc2(0, bufferSize, AV_FIFO_FLAG_AUTO_GROW),
+            [](AVFifo* fifo) {
+                if (fifo) {
+                    av_fifo_freep2(&fifo);
+                }
+            });
     }
     return true;
 }
@@ -338,7 +349,8 @@ bool FFmpegDecoder::OpenAudio() {
 
 void FFmpegDecoder::CloseVideo() {
     if (pVideoCodecCtx) {
-        avcodec_close(pVideoCodecCtx);
+        avcodec_free_context(&pVideoCodecCtx);
+
         pVideoCodecCtx = nullptr;
         videoStreamIndex = 0;
     }
@@ -346,7 +358,7 @@ void FFmpegDecoder::CloseVideo() {
 
 void FFmpegDecoder::CloseAudio() {
     if (pAudioCodecCtx) {
-        avcodec_close(pAudioCodecCtx);
+        avcodec_free_context(&pAudioCodecCtx);
         pAudioCodecCtx = nullptr;
         audioStreamIndex = 0;
     }

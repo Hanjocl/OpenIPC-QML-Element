@@ -11,6 +11,11 @@
 #include <mutex>
 #include <string>
 
+
+#if defined(__unix__) || defined(__APPLE__)
+#include <libavutil/fifo.h> // Ensures full AVFifo definition
+#endif
+
 class QQuickRealTimePlayer;
 
 using namespace std;

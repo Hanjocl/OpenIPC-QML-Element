@@ -18,8 +18,6 @@
             "description": "Windows Specific Base Configurations.",
             "inherits": "base-config",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "C:/Dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
-                "CMAKE_PREFIX_PATH": "C:/Qt/6.9.2/msvc2022_64/lib/cmake"
             },
             "hidden": true
         },

@@ -6,14 +6,21 @@
       "displayName": "DeckRC - Linux Configurations",
       "description": "Configuration for Linux",
       "inherits": "linux-config-debug",
-      "generator": "Ninja"
+      "generator": "Ninja",
+      "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "/home/mtf-nomad/Qt/6.9.2/gcc_64/lib/cmake"
+            }
     },
     {
       "name": "DeckRC-windows",
       "displayName": "DeckRC - Windows Configurations",
       "description": "User Configuration for Windows",
       "inherits": "windows-config-debug",
-      "generator": "Visual Studio 17 2022"
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "C:/Dev/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_PREFIX_PATH": "C:/Qt/6.9.2/msvc2022_64/lib/cmake"
+            }
     }
   ]
 }

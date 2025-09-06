@@ -10,6 +10,10 @@
 #include <stdexcept>
 #include <string>
 
+#if defined(__unix__) || defined(__APPLE__)
+#include <cstring>
+#endif
+
 using namespace std;
 
 Aggregator::Aggregator(const string &keypair, uint64_t epoch, uint32_t channel_id, const DataCB &cb)

@@ -17,6 +17,7 @@ extern "C" {
 
 using namespace std;
 
+#if defined(_WIN32)
 inline uint32_t htobe32(uint32_t host_32bits) {
     // 检查主机字节序是否为小端模式
     uint16_t test = 0x1;
@@ -66,6 +67,7 @@ inline uint16_t be16toh(uint16_t big_endian_16bits) {
     return big_endian_16bits;
 #endif
 }
+#endif
 
 static uint8_t ieee80211_header[] = {
     0x08, 0x01, 0x00, 0x00, // data frame, not protected, from STA to DS via an AP, duration not set

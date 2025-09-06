@@ -8,14 +8,43 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+# Package Config
 find_package(PkgConfig REQUIRED)
-
-find_package(FFmpeg REQUIRED)
+# SDL2
 find_package(SDL2 REQUIRED)
-find_package(unofficial-sodium CONFIG REQUIRED)
-pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
-include_directories(${FFMPEG_INCLUDE_DIRS})
 
+# FFmpeg
+if(WIN32)
+    find_package(FFmpeg REQUIRED)
+    include_directories(${FFMPEG_INCLUDE_DIRS})
+elseif(UNIX)
+    pkg_check_modules(FFMPEG REQUIRED
+        libavcodec
+        libavformat
+        libavutil
+        libswscale
+        libavfilter
+        libavdevice
+    )
+
+    include_directories(${FFMPEG_INCLUDE_DIRS})
+    link_directories(${FFMPEG_LIBRARY_DIRS})
+endif()
+
+# libsodium
+if(WIN32)
+    find_package(unofficial-sodium CONFIG REQUIRED)
+elseif(UNIX)
+    pkg_check_modules(SODIUM REQUIRED libsodium)
+
+    include_directories(${SODIUM_INCLUDE_DIRS})
+    link_directories(${SODIUM_LIBRARY_DIRS})
+endif()
+
+# libusb
+pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
+
+# QT6
 find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 )
 
 
@@ -37,14 +66,24 @@ list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
 include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)
 
-
-target_link_libraries(${PROJECT_NAME}
-    Qt6::QuickControls2
-    Qt6::Quick
-    ${FFMPEG_LIBRARIES}
-    ${SDL2_LIBRARIES}
-    PkgConfig::LIBUSB
-    unofficial-sodium::sodium)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}
+        Qt6::QuickControls2
+        Qt6::Quick
+        ${FFMPEG_LIBRARIES}
+        ${SDL2_LIBRARIES}
+        PkgConfig::LIBUSB
+        unofficial-sodium::sodium)
+elseif(UNIX)
+     target_link_libraries(${PROJECT_NAME}
+        Qt6::QuickControls2
+        Qt6::Quick
+        ${FFMPEG_LIBRARIES}
+        swresample
+        ${SDL2_LIBRARIES}
+        PkgConfig::LIBUSB
+        ${SODIUM_LIBRARIES})
+endif()
 
 
 

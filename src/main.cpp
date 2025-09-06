@@ -7,35 +7,41 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
-#ifdef DEBUG_MODE
-#include <DbgHelp.h>
-#pragma comment(lib, "DbgHelp.lib")
-// 创建Dump文件
-void CreateDumpFile(LPCSTR lpstrDumpFilePathName, EXCEPTION_POINTERS *pException) {
-    HANDLE hDumpFile = CreateFileA(
-        lpstrDumpFilePathName, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL, nullptr);
-    // Dump信息
-    MINIDUMP_EXCEPTION_INFORMATION dumpInfo;
-    dumpInfo.ExceptionPointers = pException;
-    dumpInfo.ThreadId = GetCurrentThreadId();
-    dumpInfo.ClientPointers = TRUE;
-    // 写入Dump文件内容
-    MiniDumpWriteDump(
-        GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &dumpInfo, nullptr, nullptr);
-    CloseHandle(hDumpFile);
-}
-// 处理Unhandled Exception的回调函数
-LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException) {
-    CreateDumpFile("dump.dmp", pException);
-    return EXCEPTION_EXECUTE_HANDLER;
-}
+#ifdef _WIN32
+    #ifdef DEBUG_MODE
+        #include <DbgHelp.h>
 
+
+        #pragma comment(lib, "DbgHelp.lib")
+        // 创建Dump文件
+        void CreateDumpFile(LPCSTR lpstrDumpFilePathName, EXCEPTION_POINTERS *pException) {
+            HANDLE hDumpFile = CreateFileA(
+                lpstrDumpFilePathName, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+                FILE_ATTRIBUTE_NORMAL, nullptr);
+                // Dump信息
+                MINIDUMP_EXCEPTION_INFORMATION dumpInfo;
+                dumpInfo.ExceptionPointers = pException;
+                dumpInfo.ThreadId = GetCurrentThreadId();
+                dumpInfo.ClientPointers = TRUE;
+                // 写入Dump文件内容
+                MiniDumpWriteDump(
+                    GetCurrentProcess(), GetCurrentProcessId(), hDumpFile, MiniDumpNormal, &dumpInfo, nullptr, nullptr);
+                    CloseHandle(hDumpFile);
+                }
+                // 处理Unhandled Exception的回调函数
+                LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException) {
+                    CreateDumpFile("dump.dmp", pException);
+                    return EXCEPTION_EXECUTE_HANDLER;
+                }
+                
+    #endif
 #endif
 
 int main(int argc, char *argv[]) {
-#ifdef DEBUG_MODE
-    SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler);
+#ifdef WIN32
+    #ifdef DEBUG_MODE
+        SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler);
+    #endif
 #endif
 
     QCoreApplication::setAttribute (Qt::AA_UseDesktopOpenGL);    

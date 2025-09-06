@@ -16,6 +16,13 @@
 
 #include "Rtp.h"
 
+#if defined(__unix__) || defined(__APPLE__)
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <unistd.h>
+#endif
+
 std::vector<std::string> WFBReceiver::GetDongleList() {
     std::vector<std::string> list;
 
@@ -107,7 +114,8 @@ bool WFBReceiver::Start(const std::string &vidPid, uint8_t channel, int channelW
         return false;
     }
 
-    usbThread = std::make_shared<std::thread>([=]() {
+    usbThread = std::make_shared<std::thread>(
+    [this, channel, channelWidth, logger]() {
         WiFiDriver wifi_driver { logger };
         try {
             rtlDevice = wifi_driver.CreateRtlDevice(dev_handle);
@@ -127,7 +135,7 @@ bool WFBReceiver::Start(const std::string &vidPid, uint8_t channel, int channelW
         }
         auto rc = libusb_release_interface(dev_handle, 0);
         if (rc < 0) {
-            // error
+            // error handling if needed
         }
         logger->info("==========stoped==========");
         libusb_close(dev_handle);
@@ -137,6 +145,7 @@ bool WFBReceiver::Start(const std::string &vidPid, uint8_t channel, int channelW
         Stop();
         usbThread.reset();
     });
+
     usbThread->detach();
 
     return true;
@@ -175,7 +184,12 @@ void WFBReceiver::handle80211Frame(const Packet &packet) {
     }
 }
 
-static unsigned long long sendFd = INVALID_SOCKET;
+#ifdef _WIN32
+    static SOCKET sendFd = INVALID_SOCKET;
+#else
+    static int sendFd = -1;
+#endif
+
 static volatile bool playing = false;
 
 
@@ -235,17 +249,43 @@ bool WFBReceiver::Stop() {
 }
 
 WFBReceiver::WFBReceiver() {
+#ifdef _WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         std::cerr << "WSAStartup failed." << std::endl;
         return;
     }
+#endif
+
     sendFd = socket(AF_INET, SOCK_DGRAM, 0);
+
+#ifdef _WIN32
+    const auto invalidSocket = INVALID_SOCKET;
+#else
+    const auto invalidSocket = -1;
+#endif
+
+    if (sendFd == invalidSocket) {
+        std::cerr << "Failed to create socket." << std::endl;
+#ifdef _WIN32
+        WSACleanup();
+#endif
+    }
 }
 
 WFBReceiver::~WFBReceiver() {
-    closesocket(sendFd);
-    sendFd = INVALID_SOCKET;
-    WSACleanup();
     Stop();
+
+#ifdef _WIN32
+    if (sendFd != INVALID_SOCKET) {
+        closesocket(sendFd);
+        sendFd = INVALID_SOCKET;
+    }
+    WSACleanup();
+#else
+    if (sendFd != -1) {
+        close(sendFd);
+        sendFd = -1;
+    }
+#endif
 }
