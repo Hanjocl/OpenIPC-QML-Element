@@ -16,7 +16,7 @@ find_package(unofficial-sodium CONFIG REQUIRED)
 pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
 include_directories(${FFMPEG_INCLUDE_DIRS})
 
-find_package(Qt5 COMPONENTS Quick Multimedia  REQUIRED)
+find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 )
 
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -37,11 +37,17 @@ list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
 include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)
 
+
 target_link_libraries(${PROJECT_NAME}
-        Qt5::Quick ${FFMPEG_LIBRARIES}
-        ${SDL2_LIBRARIES}
-        PkgConfig::LIBUSB
-        unofficial-sodium::sodium)
+    Qt6::QuickControls2
+    Qt6::Quick
+    ${FFMPEG_LIBRARIES}
+    ${SDL2_LIBRARIES}
+    PkgConfig::LIBUSB
+    unofficial-sodium::sodium)
+
+
+
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(DEBUG_SUFFIX)
@@ -67,7 +73,7 @@ if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     foreach (QT_LIB Core)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
-                "${QT_INSTALL_PATH}/bin/Qt5${QT_LIB}${DEBUG_SUFFIX}.dll"
+                "${QT_INSTALL_PATH}/bin/Qt6${QT_LIB}${DEBUG_SUFFIX}.dll"
                 "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
     endforeach (QT_LIB)
 endif ()

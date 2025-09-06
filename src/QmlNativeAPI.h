@@ -74,7 +74,7 @@ public:
         return WFBReceiver::Instance().Start(vidPid.toStdString(), channel, channelWidth, keyPath.toStdString());
     }
     Q_INVOKABLE static bool Stop() {
-        std::async([]() { WFBReceiver::Instance().Stop(); });
+        std::thread([]() { WFBReceiver::Instance().Stop(); }).detach();
         return true;
     }
     Q_INVOKABLE static void BuildSdp(const QString &filePath, const QString &codec, int payloadType, int port) {

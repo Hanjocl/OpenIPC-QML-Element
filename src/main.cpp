@@ -10,9 +10,9 @@
 #include <DbgHelp.h>
 #pragma comment(lib, "DbgHelp.lib")
 // 创建Dump文件
-void CreateDumpFile(LPCWSTR lpstrDumpFilePathName, EXCEPTION_POINTERS *pException) {
-    HANDLE hDumpFile = CreateFile(
-        reinterpret_cast<LPCSTR>(lpstrDumpFilePathName), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+void CreateDumpFile(LPCSTR lpstrDumpFilePathName, EXCEPTION_POINTERS *pException) {
+    HANDLE hDumpFile = CreateFileA(
+        lpstrDumpFilePathName, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
         FILE_ATTRIBUTE_NORMAL, nullptr);
     // Dump信息
     MINIDUMP_EXCEPTION_INFORMATION dumpInfo;
@@ -26,7 +26,7 @@ void CreateDumpFile(LPCWSTR lpstrDumpFilePathName, EXCEPTION_POINTERS *pExceptio
 }
 // 处理Unhandled Exception的回调函数
 LONG ApplicationCrashHandler(EXCEPTION_POINTERS *pException) {
-    CreateDumpFile(L"dump.dmp", pException);
+    CreateDumpFile("dump.dmp", pException);
     return EXCEPTION_EXECUTE_HANDLER;
 }
 

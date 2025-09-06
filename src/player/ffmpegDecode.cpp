@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 
+extern "C" {
+#include <libavutil/fifo.h> // Ensures full AVFifo definition
+}
+
 #define MAX_AUDIO_PACKET (2 * 1024 * 1024)
 
 bool FFmpegDecoder::OpenInput(string &inputFile) {

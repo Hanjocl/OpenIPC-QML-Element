@@ -31,7 +31,7 @@ TItemRender::TItemRender() {
 
 void TItemRender::render() {
     m_render.paint();
-    m_window->resetOpenGLState();
+    //_window->resetOpenGLState();
 }
 
 QOpenGLFramebufferObject *TItemRender::createFramebufferObject(const QSize &size) {
