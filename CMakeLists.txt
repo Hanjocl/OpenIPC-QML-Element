@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(fpv4win)
+project(OpenIPC_QML)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)

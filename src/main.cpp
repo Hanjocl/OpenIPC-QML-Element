@@ -2,6 +2,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickWindow>
 #include <player/QQuickRealTimePlayer.h>
 
 #pragma comment(lib, "ws2_32.lib")
@@ -36,6 +37,11 @@ int main(int argc, char *argv[]) {
 #ifdef DEBUG_MODE
     SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashHandler);
 #endif
+
+    QCoreApplication::setAttribute (Qt::AA_UseDesktopOpenGL);    
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    QQuickWindow::setSceneGraphBackend("opengl");
+
 
     QGuiApplication app(argc, argv);
 
