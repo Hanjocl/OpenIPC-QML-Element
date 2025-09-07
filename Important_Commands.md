@@ -1,6 +1,22 @@
 # Installation Guide
 This guide will walk you through the steps to install this into your current QML project, like using it as a library.
 
+## Table of Content
+- [Prepping the Hardware](#prepping-the-hardware)
+- [Installing this as a Library](#installing-this-as-a-library)
+- [How-to-use in QML](#how-to-use-in-qml)
+  - [1. Selection box for codec](#1-selection-box-for-codec)
+  - [2. Selection box for channelWidth](#2-selection-box-for-channelwidth)
+  - [3. Selection box for Channel](#3-selection-box-for-channel)
+  - [4. Selection box for dongle based on adresses](#4-selection-box-for-dongle-based-on-adresses)
+  - [5. Key selector & file dialog](#5-key-selector--file-dialog)
+  - [6. Start button to start live stream](#6-start-button-to-start-live-stream)
+  - [7. QMl Live video feed display](#7-qml-live-video-feed-display)
+  - [8. Shows the debug logs in a ListView](#8-shows-the-debug-logs-in-a-listview)
+- [NativeApi (NativeApi module)](#1-nativeapi-nativeapi-module)
+- [QQuickRealTimePlayer (realTimePlayer module)](#2-qquickrealtimeplayer-realtimeplayer-module)
+- [Troubleshooting](#troubleshooting)
+
 ## Prepping the hardware
 1. Download [Zadig](https://github.com/pbatard/libwdi/releases/download/v1.5.0/zadig-2.8.exe)
 2. 'Repair' the libusb driver (you may need to enable [Options] -> [List All Devices] to show your adapter).
