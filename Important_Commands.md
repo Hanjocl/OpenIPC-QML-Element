@@ -47,10 +47,10 @@ This guide will walk you through the steps to install this into your current QML
 
 # How-to-use in QML
 The following guide will go over all the commands available and in which order they need to be used.
-## QML Commands
-Use the following QWML code modules to make it work!
+### PLUG-N-PLAY solutions
+Use the following QML code modules to make it work!
 
-1. Selection box for codec
+#### 1. Selection box for codec
 ```qml
 ComboBox {
     id: selectCodec
