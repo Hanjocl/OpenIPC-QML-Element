@@ -4,9 +4,11 @@ This is a fork of fpv4win (an app for Windows that packages multiple components 
 
 Basically I just made the documentation and updated parts of it so it works with QT6. The main functionality credits all go the the contributer of fpv4win!
 
+# See the How-to-Guide on how to implement this project
+[Setup Guide](READ_HOW_TO_USE.md)
 
-
-It has dependencies on:
+---
+### Dependencies:
 - [devourer](https://github.com/openipc/devourer): A userspace rtl8812au driver initially created by [buldo](https://github.com/buldo) and converted to C by [josephnef](https://github.com/josephnef) .
 - [wfb-ng](https://github.com/svpcom/wfb-ng): A library that allows broadcasting the video feed over the air.
 - [rtl8812au-monitor-pcap] (https://github.com/TalusL/rtl8812au-monitor-pcap.git): Hopefully only used on Windows to create a .pcap file? 
@@ -20,5 +22,3 @@ It is recommended to use with [OpenIPC](https://github.com/OpenIPC) FPV
 - 2. Repair the libusb driver (you may need to enable [Options] -> [List All Devices] to show your adapter).
 - 3. Install [vcredist_x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
-# See the How-to-Guide on how to implement this project
-[Setup Guide](READ_HOW_TO_USE.md)

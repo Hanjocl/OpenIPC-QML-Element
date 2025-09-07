@@ -20,8 +20,7 @@ This guide will walk you through the steps to install this into your current QML
 ## Prepping the hardware
 1. Download [Zadig](https://github.com/pbatard/libwdi/releases/download/v1.5.0/zadig-2.8.exe)
 2. 'Repair' the libusb driver (you may need to enable [Options] -> [List All Devices] to show your adapter).
-
-3. Install if not already installed [vcredist_x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+3. Install, if not already installed [vcredist_x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
 ## Installing this as a library
 1. Add this repo to your current project (I recommend doing it as a git submodule)
