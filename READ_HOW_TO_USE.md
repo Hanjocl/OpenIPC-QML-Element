@@ -430,7 +430,7 @@ This module is the control interface to all functionality. See it as the command
 
 ---
 ### 2. QQuickRealTimePlayer (`realTimePlayer` module)
-This module is the actuall displays the live feed once it is available through the NativeApi.
+This module is does the magic! It displays the live feed once it is available.
 
 ```qml
 import realTimePlayer 1.0
