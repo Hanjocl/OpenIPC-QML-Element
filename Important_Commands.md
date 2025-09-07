@@ -44,10 +44,12 @@ This guide will walk you through the steps to install this into your current QML
     }
     ```
 
-
+---
 # How-to-use in QML
-The following guide will go over all the commands available and in which order they need to be used.
-### PLUG-N-PLAY solutions
+The following guide provides a list of plug-n-play modules for QML and go over the commands used in them. 
+It just takes all the thing from the example qml and puts them in a list...
+
+### The PLUG-N-PLAY solution
 Use the following QML code modules to make it work!
 
 #### 1. Selection box for codec
@@ -65,7 +67,7 @@ ComboBox {
     }
 }
 ```
-2. Selection box for channelWidth
+#### 2. Selection box for channelWidth
 ```qml
 ComboBox {
     id: selectBw
@@ -90,7 +92,7 @@ ComboBox {
 }
 ```
 
-3. Selection box for Channel
+#### 3. Selection box for Channel
 ```qml
 ComboBox {
     id: selectChannel
@@ -110,7 +112,7 @@ ComboBox {
 }
 ```
 
-4. Selection box for dongle based on adresses 
+#### 4. Selection box for dongle based on adresses 
 ```qml
 ComboBox {
     id: selectDev
@@ -129,7 +131,7 @@ ComboBox {
 }
 ```
 
-5. Key selector & file dialog
+#### 5. Key selector & file dialog
 ```qml
 Column {
     FileDialog {
@@ -157,7 +159,7 @@ Column {
 }
 ```
 
-6. Start button to start live stream
+#### 6. Start button to start live stream
 ```qml
 Rectangle {
     // Size of the background adapts to the text size plus some padding
@@ -205,7 +207,7 @@ Rectangle {
 }
 ```
 
-7. QMl Live video feed display
+#### 7. QMl Live video feed display
 ```qml
 QQuickRealTimePlayer {
         x: 0
@@ -349,7 +351,7 @@ QQuickRealTimePlayer {
     }
 ```
 
-8. Shows the debug logs in a ListView
+#### 8. Shows the debug logs in a ListView
 ```qml
 ListView {
     z:1
@@ -366,15 +368,15 @@ ListView {
     }
 }
 ```
-
+---
 ### 1. NativeApi (`NativeApi` module)
 This module is the control interface to all functionality. See it as the command centre. It supports the following commands:
 
-- Get a list of connect dongles at start-up of application.
+#### Get a list of connect dongles at start-up of application.
     ```qml
     NativeApi.NativeApi.GetDongleList()
     ```
-- Does some magic to make the stream work (Haven't looked into it as it just works)
+#### Does some magic to make the stream work (Haven't looked into it as it just works)
     ```qml
     NativeApi.onRtpStream.connect((sdpFile)=>{
                 playingFile = sdpFile;
@@ -385,19 +387,19 @@ This module is the control interface to all functionality. See it as the command
                 play(playingFile)
             });
     ```
-- Gets the currently selected channel config
+#### Gets the currently selected channel config
     ```qml
     NativeApi.GetConfig()["config.channel"]
     ```
-- Gets the received Wifi Frames
+#### Gets the received Wifi Frames
     ```qml
     NativeApi.wifiFrameCount
     ```
-- Gets the total received RTP packages
+#### Gets the total received RTP packages
     ```qml
     NativeApi.rtpPktCount
     ```
-- Shows debug messages
+#### Shows debug messages
     ```qml
     Component.onCompleted: {
         NativeApi.onLog.connect((level,msg)=>{
@@ -410,7 +412,7 @@ This module is the control interface to all functionality. See it as the command
 
 
 
-
+---
 ### 2. QQuickRealTimePlayer (`realTimePlayer` module)
 This module is the actuall displays the live feed once it is available through the NativeApi.
 
@@ -434,7 +436,7 @@ QQuickRealTimePlayer {
 }
 ```
 
-
+---
 ## Throubleshooting
 This is a guide for general problem I ran into when solving this mess.
 
