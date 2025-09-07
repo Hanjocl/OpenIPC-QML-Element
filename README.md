@@ -22,5 +22,5 @@ It is recommended to use with [OpenIPC](https://github.com/OpenIPC) FPV
 
 - 3. Install [vcredist_x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 
-### How to use in QML 
-- 1. 
+# See the How-to-Guide on how to implement this project
+[Setup Guide](READ_HOW_TO_USE.md)
