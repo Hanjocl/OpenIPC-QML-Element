@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(OpenIPC_QML)
+project(OpenIPC_QML_Element)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -15,8 +15,8 @@ find_package(SDL2 REQUIRED)
 
 # FFmpeg
 if(WIN32)
-    find_package(FFmpeg REQUIRED)
-    include_directories(${FFMPEG_INCLUDE_DIRS})
+    find_package(FFmpeg REQUIRED COMPONENTS avcodec avformat avutil swscale)
+    # include_directories(${FFMPEG_INCLUDE_DIRS})
 elseif(UNIX)
     pkg_check_modules(FFMPEG REQUIRED
         libavcodec
@@ -72,7 +72,10 @@ if(WIN32)
     target_link_libraries(${PROJECT_NAME}
         Qt6::QuickControls2
         Qt6::Quick
-        ${FFMPEG_LIBRARIES}
+        FFmpeg::avcodec
+        FFmpeg::avformat
+        FFmpeg::avutil
+        FFmpeg::swscale
         ${SDL2_LIBRARIES}
         PkgConfig::LIBUSB
         unofficial-sodium::sodium)
