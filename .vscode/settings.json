@@ -72,6 +72,7 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "qguiapplication": "cpp"
+        "qguiapplication": "cpp",
+        "xtree": "cpp"
     }, // enable using CMakePresets.json
 }

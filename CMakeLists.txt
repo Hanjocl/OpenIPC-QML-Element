@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(OpenIPC_QML)
+project(OpenIPC_QML_Lib)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -63,9 +63,11 @@ file(GLOB_RECURSE SRC_LIST
 )
 list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
 
+set(LIB_NAME "OpenIPC_QML_Element_Lib")
+add_library(${LIB_NAME} STATIC ${SRC_LIST})
+
 include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
-# add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)  # Uncomment this to create an example application (just fpv4win) for testing
-add_library(${PROJECT_NAME} STATIC ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)  # Uncomment this to create an example application (just fpv4win) for testing
 
 # link libraries
 if(WIN32)
@@ -73,16 +75,52 @@ if(WIN32)
         Qt6::QuickControls2
         Qt6::Quick
         ${FFMPEG_LIBRARIES}
-        ${SDL2_LIBRARIES}
+        ${SDL2_LIBRARIES}   
         PkgConfig::LIBUSB
-        unofficial-sodium::sodium)
+        unofficial-sodium::sodium
+    )
+
+    target_link_libraries(${LIB_NAME}
+        Qt6::QuickControls2
+        Qt6::Quick
+        ${FFMPEG_LIBRARIES}
+        ${SDL2_LIBRARIES}   
+        PkgConfig::LIBUSB
+        unofficial-sodium::sodium
+    )
 elseif(UNIX)
-     target_link_libraries(${PROJECT_NAME}
+    target_link_libraries(${PROJECT_NAME}
         Qt6::QuickControls2
         Qt6::Quick
         ${FFMPEG_LIBRARIES}
         swresample
         ${SDL2_LIBRARIES}
         PkgConfig::LIBUSB
-        ${SODIUM_LIBRARIES})
+        ${SODIUM_LIBRARIES}
+    )
+    
+    target_link_libraries(${LIB_NAME}
+        Qt6::QuickControls2
+        Qt6::Quick
+        ${FFMPEG_LIBRARIES}
+        swresample
+        ${SDL2_LIBRARIES}
+        PkgConfig::LIBUSB
+        ${SODIUM_LIBRARIES}
+    )
+endif()
+
+
+# -----------------------------
+# Windows deployment
+# -----------------------------
+if(WIN32)
+    find_program(QT_WINDEPLOYQT_EXECUTABLE windeployqt HINTS ${Qt6_DIR}/../../../bin)
+    
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${QT_WINDEPLOYQT_EXECUTABLE} 
+            --qmldir ${CMAKE_SOURCE_DIR}/qml
+            $<TARGET_FILE:${PROJECT_NAME}>
+        COMMENT "Running windeployqt with custom options"
+    )
 endif()
