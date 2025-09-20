@@ -62,11 +62,11 @@ file(GLOB_RECURSE SRC_LIST
         src/*.h
 )
 list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
+include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 
 set(LIB_NAME "OpenIPC_QML_Element_Lib")
 add_library(${LIB_NAME} STATIC ${SRC_LIST})
 
-include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)  # Uncomment this to create an example application (just fpv4win) for testing
 
 # link libraries
@@ -74,10 +74,7 @@ if(WIN32)
     target_link_libraries(${PROJECT_NAME}
         Qt6::QuickControls2
         Qt6::Quick
-        FFmpeg::avcodec
-        FFmpeg::avformat
-        FFmpeg::avutil
-        FFmpeg::swscale
+        ${FFMPEG_LIBRARIES}
         ${SDL2_LIBRARIES}
         PkgConfig::LIBUSB
         unofficial-sodium::sodium
