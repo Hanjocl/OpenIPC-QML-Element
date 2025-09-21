@@ -5,9 +5,35 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+
+# Custom importig things
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    message("build debug")
+    add_definitions(-DDEBUG_MODE)
+endif()
+
+file(GLOB_RECURSE SRC_LIST
+        3rd/rtl8812au-monitor-pcap/*.c
+        3rd/rtl8812au-monitor-pcap/*.cpp
+        src/*.cpp
+        src/*.c
+        src/*.h
+)
+list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
+include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
+
+
+# -----------------------------
+# Library: CRSF_USB_Lib
+# -----------------------------
+set(LIB_NAME "OpenIPC_QML_Element_Lib")
+add_library(${LIB_NAME} STATIC 
+    ${SRC_LIST}
+)
+
+### PACKAGES ###
 # Package Config
 find_package(PkgConfig REQUIRED)
 # SDL2
@@ -48,38 +74,15 @@ pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
 find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 )
 
 
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    message("build debug")
-    add_definitions(-DDEBUG_MODE)
-endif()
 
 
-file(GLOB_RECURSE SRC_LIST
-        3rd/rtl8812au-monitor-pcap/*.c
-        3rd/rtl8812au-monitor-pcap/*.cpp
-        src/*.cpp
-        src/*.c
-        src/*.h
-)
-list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
-include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 
-set(LIB_NAME "OpenIPC_QML_Element_Lib")
-add_library(${LIB_NAME} STATIC ${SRC_LIST})
+
 
 add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)  # Uncomment this to create an example application (just fpv4win) for testing
 
 # link libraries
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME}
-        Qt6::QuickControls2
-        Qt6::Quick
-        ${FFMPEG_LIBRARIES}
-        ${SDL2_LIBRARIES}
-        PkgConfig::LIBUSB
-        unofficial-sodium::sodium
-    )
-
     target_link_libraries(${LIB_NAME}
         Qt6::QuickControls2
         Qt6::Quick
@@ -88,17 +91,9 @@ if(WIN32)
         PkgConfig::LIBUSB
         unofficial-sodium::sodium
     )
-elseif(UNIX)
-    target_link_libraries(${PROJECT_NAME}
-        Qt6::QuickControls2
-        Qt6::Quick
-        ${FFMPEG_LIBRARIES}
-        swresample
-        ${SDL2_LIBRARIES}
-        PkgConfig::LIBUSB
-        ${SODIUM_LIBRARIES}
-    )
-    
+
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${LIB_NAME})
+elseif(UNIX)    
     target_link_libraries(${LIB_NAME}
         Qt6::QuickControls2
         Qt6::Quick
@@ -108,6 +103,7 @@ elseif(UNIX)
         PkgConfig::LIBUSB
         ${SODIUM_LIBRARIES}
     )
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${LIB_NAME})
 endif()
 
 
