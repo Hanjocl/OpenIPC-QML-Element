@@ -231,14 +231,9 @@ QString QQuickRealTimePlayer::captureJpeg() {
     if (!dir.exists()) {
         dir.mkpath(dirPath);
     }
-    stringstream ss;
-    ss << "jpg/";
-    ss << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
-              .count()
-       << ".jpg";
-    auto ok = JpegEncoder::encodeJpeg(ss.str(), _lastFrame);
-    // 截图
-    return ok ? QString(ss.str().c_str()) : "";
+    std::string fileName = generateFileName("jpg", ".jpg");
+    auto ok = JpegEncoder::encodeJpeg(fileName, _lastFrame);
+    return ok ? QString(fileName.c_str()) : "";
 }
 
 bool QQuickRealTimePlayer::startRecord() {
@@ -251,13 +246,10 @@ bool QQuickRealTimePlayer::startRecord() {
         dir.mkpath(dirPath);
     }
     // 保存路径
-    stringstream ss;
-    ss << "mp4/";
-    ss << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch())
-              .count()
-       << ".mp4";
+    std::string fileName = generateFileName("mp4", ".mp4");
+    _mp4Encoder = std::make_shared<Mp4Encoder>(fileName);
     // 创建MP4编码器
-    _mp4Encoder = make_shared<Mp4Encoder>(ss.str());
+    // _mp4Encoder = make_shared<Mp4Encoder>(ss.str());
 
     // 添加音频流
     if (decoder->HasAudio()) {
@@ -278,6 +270,33 @@ bool QQuickRealTimePlayer::startRecord() {
     // 启动编码器
     return true;
 }
+
+inline std::string QQuickRealTimePlayer::generateFileName(const std::string &folder, const std::string &ext) {
+    auto now = std::chrono::system_clock::now();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::tm tm;
+#ifdef _WIN32
+    localtime_s(&tm, &t);
+#else
+    localtime_r(&t, &tm);
+#endif
+
+    std::stringstream ss;
+    ss << folder << "/"
+       << std::setw(2) << std::setfill('0') << tm.tm_mday
+       << std::setw(2) << std::setfill('0') << (tm.tm_mon + 1)
+       << std::setw(2) << std::setfill('0') << (tm.tm_year % 100)
+       << "_"
+       << std::setw(2) << std::setfill('0') << tm.tm_hour
+       << std::setw(2) << std::setfill('0') << tm.tm_min
+       << std::setw(2) << std::setfill('0') << tm.tm_sec
+       << ext;
+
+    return ss.str();
+}
+
 
 QString QQuickRealTimePlayer::stopRecord() {
     if (!_mp4Encoder) {

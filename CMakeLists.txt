@@ -21,7 +21,7 @@ file(GLOB_RECURSE SRC_LIST
         src/*.c
         src/*.h
 )
-list(FILTER SRC_LIST EXCLUDE REGEX ".*/3rd.*/src/main.cpp")
+list(FILTER SRC_LIST EXCLUDE REGEX ".*/main\\.cpp$")
 include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pcap/hal)
 
 
@@ -31,6 +31,12 @@ include_directories(src 3rd/rtl8812au-monitor-pcap/src 3rd/rtl8812au-monitor-pca
 set(LIB_NAME "OpenIPC_QML_Element_Lib")
 add_library(${LIB_NAME} STATIC 
     ${SRC_LIST}
+)
+target_include_directories(${LIB_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/player
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/rtl8812au-monitor-pcap/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rd/rtl8812au-monitor-pcap/hal
 )
 
 ### PACKAGES ###
@@ -73,13 +79,11 @@ pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
 # QT6
 find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 )
 
-
-
-
-
-
-
-add_executable(${PROJECT_NAME} ${SRC_LIST} qml.qrc)  # Uncomment this to create an example application (just fpv4win) for testing
+add_executable(${PROJECT_NAME} 
+    ${SRC_LIST}
+    qml.qrc
+    src/main.cpp
+)
 
 # link libraries
 if(WIN32)

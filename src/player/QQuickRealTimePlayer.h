@@ -88,6 +88,8 @@ protected:
     bool enableAudio();
     // 停止播放音频
     void disableAudio();
+    // For generating filenames
+    std::string generateFileName(const std::string &folder, const std::string &ext);
     // MP4录制器
     shared_ptr<Mp4Encoder> _mp4Encoder;
     // GIF录制器
