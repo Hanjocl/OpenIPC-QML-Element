@@ -1,3 +1,17 @@
+How to install:
+---
+Install nessacery libraries:
+
+- [SDL2](https://www.libsdl.org/)
+- [FFmpeg](https://ffmpeg.org/)
+- [LIBUSB](https://github.com/libusb/libusb)
+- [LibSodium](https://doc.libsodium.org/)
+- [QML](https://doc.qt.io/QMLLive/qmllive-installation.html) (Only needed if you want the example application)
+
+
+
+
+---
 # WiFi Broadcast FPV client for QML
 
 This is a fork of fpv4win (an app for Windows that packages multiple components together to decode an H264/H265 video feed broadcasted by wfb-ng over the air)
