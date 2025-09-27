@@ -50,17 +50,29 @@ if(WIN32)
     find_package(FFmpeg REQUIRED COMPONENTS avcodec avformat avutil swscale)
     # include_directories(${FFMPEG_INCLUDE_DIRS})
 elseif(UNIX)
-    pkg_check_modules(FFMPEG REQUIRED
-        libavcodec
-        libavformat
-        libavutil
-        libswscale
-        libavfilter
-        libavdevice
-    )
+    # First try find_package
+    find_package(FFmpeg QUIET COMPONENTS avcodec avformat avutil swscale avfilter avdevice)
 
-    include_directories(${FFMPEG_INCLUDE_DIRS})
-    link_directories(${FFMPEG_LIBRARY_DIRS})
+    if(FFmpeg_FOUND)
+        message(STATUS "FFmpeg found via find_package")
+        include_directories(${FFMPEG_INCLUDE_DIRS})
+        target_link_libraries(${LIB_NAME} ${FFMPEG_LIBRARIES})
+    else()
+        # Fallback to pkg-config
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(FFMPEG REQUIRED
+            libavcodec
+            libavformat
+            libavutil
+            libswscale
+            libavfilter
+            libavdevice
+        )
+
+        include_directories(${FFMPEG_INCLUDE_DIRS})
+        link_directories(${FFMPEG_LIBRARY_DIRS})
+        target_link_libraries(${LIB_NAME} ${FFMPEG_LIBRARIES})
+    endif()
 endif()
 
 # libsodium
@@ -77,7 +89,7 @@ endif()
 pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
 
 # QT6
-find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 )
+find_package(Qt6 REQUIRED COMPONENTS Quick Multimedia QuickControls2 Widgets)
 
 add_executable(${PROJECT_NAME} 
     ${SRC_LIST}
@@ -90,25 +102,25 @@ if(WIN32)
     target_link_libraries(${LIB_NAME}
         Qt6::QuickControls2
         Qt6::Quick
+        Qt6::Widgets
         ${FFMPEG_LIBRARIES}
         ${SDL2_LIBRARIES}   
         PkgConfig::LIBUSB
         unofficial-sodium::sodium
     )
-
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${LIB_NAME})
 elseif(UNIX)    
     target_link_libraries(${LIB_NAME}
         Qt6::QuickControls2
         Qt6::Quick
+        Qt6::Widgets
         ${FFMPEG_LIBRARIES}
-        swresample
         ${SDL2_LIBRARIES}
         PkgConfig::LIBUSB
         ${SODIUM_LIBRARIES}
+        swresample
     )
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${LIB_NAME})
 endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC ${LIB_NAME})
 
 
 # -----------------------------
