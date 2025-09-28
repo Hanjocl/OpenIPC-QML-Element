@@ -231,7 +231,7 @@ QString QQuickRealTimePlayer::captureJpeg() {
     if (!dir.exists()) {
         dir.mkpath(dirPath);
     }
-    std::string fileName = generateFileName("jpg", ".jpg");
+    std::string fileName = generateFileName(dirPath.toStdString(), ".jpg");
     auto ok = JpegEncoder::encodeJpeg(fileName, _lastFrame);
     return ok ? QString(fileName.c_str()) : "";
 }
@@ -246,7 +246,7 @@ bool QQuickRealTimePlayer::startRecord() {
         dir.mkpath(dirPath);
     }
     // 保存路径
-    std::string fileName = generateFileName("mp4", ".mp4");
+    std::string fileName = generateFileName(dirPath.toStdString(), ".mp4");
     _mp4Encoder = std::make_shared<Mp4Encoder>(fileName);
     // 创建MP4编码器
     // _mp4Encoder = make_shared<Mp4Encoder>(ss.str());

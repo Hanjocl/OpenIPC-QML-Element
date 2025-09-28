@@ -16,7 +16,7 @@ inline bool convertToYUV420P(const shared_ptr<AVFrame> &frame, shared_ptr<AVFram
     if (!yuvFrame) {
         return false;
     }
-    yuvFrame->format = AV_PIX_FMT_YUVJ420P;
+    yuvFrame->format = AV_PIX_FMT_YUV420P;
     yuvFrame->width = width;
     yuvFrame->height = height;
 
@@ -85,6 +85,8 @@ bool JpegEncoder::encodeJpeg(const string &outFilePath, const shared_ptr<AVFrame
     codecCtx->width = frame->width;
     codecCtx->height = frame->height;
     codecCtx->time_base = AVRational { 1, 25 };
+    codecCtx->pix_fmt = AV_PIX_FMT_YUV420P;
+    codecCtx->color_range = AVCOL_RANGE_JPEG;
 
     // Convert frame to YUV420P if it's not already in that format
     shared_ptr<AVFrame> yuvFrame;
